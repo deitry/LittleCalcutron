@@ -3,6 +3,7 @@
 
 int main(int argc, char** argv)
 {
-    std::cout << "ok2" << '\n';
-    return 0;
+	double a;
+	std::cout << "ok2" << '\n';
+	return 0;
 }

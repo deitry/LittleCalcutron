@@ -5,5 +5,5 @@
 
 BOOST_AUTO_TEST_CASE(SimpleTest)
 {
-    BOOST_CHECK(1==1);
+	BOOST_CHECK(1==1);
 }
