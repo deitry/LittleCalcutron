@@ -76,3 +76,11 @@ BOOST_AUTO_TEST_CASE(MultipleOperatorsTest)
 	BOOST_CHECK(calculate("1 * - 1") == -1);	// да, такое теперь разрешено
 	BOOST_CHECK(calculate("1 / - 1 + 2") == 1);	// да, такое теперь разрешено
 }
+
+// примеры выражений из тех задания
+BOOST_AUTO_TEST_CASE(FinalTest)
+{
+	BOOST_CHECK(calculate("-1 + 5 - 3") == 1);
+	BOOST_CHECK(calculate("-10 + (8 * 2.5) - (3 / 1,5)") == 8);
+	BOOST_CHECK(calculate("1 + (2 * (2.5 + 2.5 + (3 - 2))) - (3 / 1.5)") == 11);
+}

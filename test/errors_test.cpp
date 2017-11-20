@@ -52,3 +52,9 @@ BOOST_AUTO_TEST_CASE(ErrorMissingOperatorTest)
 // {
 // 	check_exception_calculate("1* -1");
 //}
+
+// пример выражения из тех задания
+BOOST_AUTO_TEST_CASE(FinalExceptionTest)
+{
+	check_exception_calculate("1.1 + 2.1 + abc");
+}
