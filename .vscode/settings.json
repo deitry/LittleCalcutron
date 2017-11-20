@@ -4,6 +4,13 @@
 		"sstream": "cpp",
 		"string": "cpp",
 		"array": "cpp",
-		"initializer_list": "cpp"
+		"initializer_list": "cpp",
+		"regex": "cpp",
+		"functional": "cpp",
+		"exception": "cpp",
+		"iostream": "cpp",
+		"*.ipp": "cpp",
+		"tuple": "cpp",
+		"utility": "cpp"
 	}
 }

@@ -7,14 +7,20 @@ CFLAGS=-std=c++11 -c -Wall
 # --- конфигурация для обычного запуска 
 all: little
 	
-little: Run/main.o Run/calcutron.o
-	$(CC) Run/main.o Run/calcutron.o -o Run/LittleCalcutron
+little: Run/main.o Run/calcutron.o Run/operatorFactory.o Run/readToken.o Run/calc.o
+	$(CC) Run/main.o Run/calcutron.o Run/operatorFactory.o Run/readToken.o Run/calc.o -o Run/LittleCalcutron
 
 Run/main.o: src/main.cpp
 	$(CC) $(CFLAGS) src/main.cpp -o Run/main.o
 
 Run/calcutron.o: src/calcutron.cpp
 	$(CC) $(CFLAGS) src/calcutron.cpp -o Run/calcutron.o
+
+Run/calc.o: src/calc.cpp
+	$(CC) $(CFLAGS) src/calc.cpp -o Run/calc.o
+
+Run/readToken.o: src/readToken.cpp
+	$(CC) $(CFLAGS) src/readToken.cpp -o Run/readToken.o
 
 Run/operatorFactory.o: src/operatorFactory.cpp
 	$(CC) $(CFLAGS) src/operatorFactory.cpp -o Run/operatorFactory.o
@@ -25,8 +31,8 @@ BOOST_NAME=boost_unit_test_framework
 TEST_LIB=-L$(BOOST_PATH) -l$(BOOST_NAME)
 
 
-test: Run/main_test.o Run/calcutron_test.o Run/calcutron.o Run/operatorFactory.o
-	$(CC) Run/main_test.o Run/calcutron_test.o Run/calcutron.o Run/operatorFactory.o -o Run/LittleCalcutron $(TEST_LIB)
+test: Run/main_test.o Run/calcutron_test.o Run/calcutron.o Run/operatorFactory.o Run/readToken.o Run/calc.o
+	$(CC) Run/main_test.o Run/calcutron_test.o Run/calcutron.o Run/readToken.o Run/operatorFactory.o Run/calc.o -o Run/LittleCalcutron $(TEST_LIB)
 
 Run/main_test.o: test/main_test.cpp
 	$(CC) $(CFLAGS) -I/usr/include test/main_test.cpp -o Run/main_test.o
