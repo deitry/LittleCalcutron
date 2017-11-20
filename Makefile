@@ -32,7 +32,7 @@ TEST_LIB=-L$(BOOST_PATH) -l$(BOOST_NAME)
 
 
 test: Run/main_test.o Run/calcutron_test.o Run/calcutron.o Run/operatorFactory.o Run/readToken.o Run/calc.o
-	$(CC) Run/main_test.o Run/calcutron_test.o Run/calcutron.o Run/readToken.o Run/operatorFactory.o Run/calc.o -o Run/LittleCalcutron $(TEST_LIB)
+	$(CC) Run/main_test.o Run/calcutron_test.o Run/calcutron.o Run/readToken.o Run/operatorFactory.o Run/calc.o -o Run/LittleCalcutronTest $(TEST_LIB)
 
 Run/main_test.o: test/main_test.cpp
 	$(CC) $(CFLAGS) -I/usr/include test/main_test.cpp -o Run/main_test.o
