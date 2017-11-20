@@ -6,13 +6,11 @@ using namespace calcutron;
 using namespace std;
 
 
-// FIXME: в рамках _модульного_ тестирования следует тестировать отдельные функции, а не всё целиком.
-// Не только всё целиком.
-
 BOOST_AUTO_TEST_CASE(ReturnNumberTest)
 {
 	BOOST_CHECK(calculate("1") == 1);
-}
+	BOOST_CHECK(calculate("   1") == 1);
+	BOOST_CHECK(calculate("1   ") == 1);}
 
 BOOST_AUTO_TEST_CASE(SumTest)
 {
@@ -62,79 +60,19 @@ BOOST_AUTO_TEST_CASE(DivFloatTest)
 BOOST_AUTO_TEST_CASE(ParenthesesSimpleTest)
 {
 	BOOST_CHECK(calculate("(1+1)") == 2);
+	BOOST_CHECK(calculate("[1+1]") == 2);
 }
 
 BOOST_AUTO_TEST_CASE(ParenthesesComplexTest)
 {
+	BOOST_CHECK(calculate("-1*(4+2*(1-2))+3") == 1);
 	BOOST_CHECK(calculate("-1*(1+1)+3") == 1);
 }
 
-BOOST_AUTO_TEST_CASE(ErrorMultipleFloatPointsTest)
+BOOST_AUTO_TEST_CASE(MultipleOperatorsTest)
 {
-	try
-	{
-		string test = "1.1.1";
-		calculate(test);
-		BOOST_CHECK_MESSAGE(false, "'" + test + "' does not throw exception");
-	}
-	catch (const exception& e)
-	{
-
-	}
-}
-
-BOOST_AUTO_TEST_CASE(ErrorMissingOperatorParenthesesTest)
-{
-	try
-	{
-		string test = "(1(1))";
-		calculate(test);
-		BOOST_CHECK_MESSAGE(false, "'" + test + "' does not throw exception");
-	}
-	catch (const exception& e)
-	{
-
-	}
-}
-
-BOOST_AUTO_TEST_CASE(ErrorDivByZeroTest)
-{
-	try
-	{
-		string test = "1/0";
-		calculate(test);
-		BOOST_CHECK_MESSAGE(false, "'" + test + "' does not throw exception");
-	}
-	catch (const exception& e)
-	{
-
-	}
-}
-
-BOOST_AUTO_TEST_CASE(ErrorMissingOperatorTest)
-{
-	try
-	{
-		string test = "1 1 1";
-		calculate(test);
-		BOOST_CHECK_MESSAGE(false, "'" + test + "' does not throw exception");
-	}
-	catch (const exception& e)
-	{
-	
-	}
-}
-
-BOOST_AUTO_TEST_CASE(ErrorUnsupportedOperatorTest)
-{
-	try
-	{
-		string test = "--1";
-		calculate(test);
-		BOOST_CHECK_MESSAGE(false, "'" + test + "' does not throw exception");
-	}
-	catch (const exception& e)
-	{
-
-	}
+	BOOST_CHECK(calculate("- - 1") == 1);
+	BOOST_CHECK(calculate("1 - - 1") == 2);
+	BOOST_CHECK(calculate("1 * - 1") == -1);	// да, такое теперь разрешено
+	BOOST_CHECK(calculate("1 / - 1 + 2") == 1);	// да, такое теперь разрешено
 }

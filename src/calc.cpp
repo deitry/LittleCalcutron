@@ -22,7 +22,7 @@ namespace calcutron
 			if (tree) delete tree;
 			delete s;
 			
-			// пробрасываем исколючение
+			// пробрасываем исключение наверх
 			throw e;
 		}
 	
@@ -39,18 +39,18 @@ namespace calcutron
 		IToken* last = nullptr;
 		IToken* current = nullptr;
 
-		char ch;
+		char ch[2] = ""; // чтобы можно было проверять на соответствие regex
 
 		while (*input)
 		{
-			ch = input->get();
-			if (ch == '\0' || ch == '\n' || ch == '\377') break;
-			if (ch == ')')
+			ch[0] = input->get();
+			if (regex_match(ch,tokenRegExMap[END])) break;
+			if (regex_match(ch,tokenRegExMap[RP]))
 			{
 				if (insideParentheses)
 				{
 					// кладём скобку назад, чтобы потом проверить
-					input->putback(ch);
+					input->putback(ch[0]);
 					break;
 				}
 				else
@@ -59,7 +59,7 @@ namespace calcutron
 				}
 			}
 			
-			input->putback(ch);
+			input->putback(ch[0]);
 
 			// считываем токен
 			current = readToken(input);
@@ -90,6 +90,8 @@ namespace calcutron
 			auto op = dynamic_cast<IOperator*>(current);
 			if (op)
 			{
+				IOperator* opParent = nullptr;
+
 				// проверяем, является ли последний токен значением
 				auto value = dynamic_cast<Value*>(last);
 				if (value)
@@ -103,26 +105,42 @@ namespace calcutron
 						continue;
 					}
 					
-					// определяем ближайший оператор меньшего приоритета
-					auto opParent = value->getParent();
-					while (opParent && opParent->priority() >= op->priority())
-						opParent = opParent->getParent();
+					// если есть родитель, берём его на заметку
+					opParent = value->getParent();
+				}
+
+				// оцениваем приоритет выполнения оператора
+				OpPriority prior = op->priority();
+
+				// если последний токен был оператором
+				auto lastOp = dynamic_cast<IOperator*>(last);
+				if (lastOp)
+				{
+					// интересуемся, может ли новый оператор выполнять унарные операции
+					if (op->CanBeUnary()) prior = Unar;
+					else throw runtime_error("operator can't be unar");
+						// TODO: какие-нибудь указания на то, какой именно оператор. Пока нету положения в строке
+					opParent = lastOp;
+				}
+				
+				// определяем ближайший оператор меньшего или равного приоритета
+				while (opParent && opParent->priority() >= prior)
+					opParent = opParent->getParent();
 					
-					// если подходящий родитель всё-таки нашёлся
-					if (opParent)
-					{
-						op->setLeft(opParent->getRight());
-						opParent->setRight(op);
-						last = op;
-						continue;
-					}
-					else
-					{
-						// если у нового оператора наименьший приоритет, делаем этот оператор новым рутом
-						op->setLeft(root);
-						root = last = op;
-						continue;
-					}
+				// если подходящий родитель всё-таки нашёлся
+				if (opParent)
+				{
+					op->setLeft(opParent->getRight());
+					opParent->setRight(op);
+					last = op;
+					continue;
+				}
+				else
+				{
+					// если у нового оператора наименьший приоритет, делаем этот оператор новым рутом
+					op->setLeft(root);
+					root = last = op;
+					continue;
 				}
 			}
 			

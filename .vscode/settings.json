@@ -11,6 +11,11 @@
 		"iostream": "cpp",
 		"*.ipp": "cpp",
 		"tuple": "cpp",
-		"utility": "cpp"
+		"utility": "cpp",
+		"*.tcc": "cpp",
+		"ratio": "cpp",
+		"system_error": "cpp",
+		"type_traits": "cpp",
+		"stdexcept": "cpp"
 	}
 }

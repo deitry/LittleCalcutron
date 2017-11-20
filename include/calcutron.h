@@ -14,16 +14,22 @@ namespace calcutron
 		NONE,				// нету такого
 		VALUE,			// значение
 		OPERATOR,		// оператор
-		PARENTHESES		// выражение в скобках
+		LP,				// левые скобки - по ним определяем, что надо парсить выражение
+		RP,				// правые скобки - по ним определяем, что пора выходить
+		PAR,				// в отдельное регулярное выражение складываем все пары,
+							// чтобы убедиться, что мы берём скобки из правильной пары
 		//EXPRESSION,		// выражение
 		//VARIABLE			// переменная
+		WS,				// whitespaces - пробелы и табуляция
+		END				// конец строки. Строго говоря, это не токен, но для унификации делаем его типом
 	};
 
 	// Доступные приоритеты выполнения операторов
 	enum OpPriority {
 		LessGreat,	// меньше/больше
 		PlusMinus,	// сложение и вычитание
-		MulDiv		// умножение и деление
+		MulDiv,		// умножение и деление
+		Unar			// для унарных операций
 	};
 
 	// карта соответствия доступных между типами токенов и регулярными выражениями,
@@ -87,26 +93,27 @@ namespace calcutron
 
 		//virtual double get() = 0;
 		virtual OpPriority priority() = 0;	// TODO: не очень красиво, надо подумать на досуге. Эта информация касается класса целиком и должна быть статической
+		virtual bool CanBeUnary() { return false; };
 
 		IToken* getLeft() { return left; }
-		void setLeft(IToken* token) { left = token; token->parent = this; }
+		void setLeft(IToken* token) { left = token; if (token) token->parent = this; }
 
 		IToken* getRight() { return right; }
-		void setRight(IToken* token) { right = token; token->parent = this; }
+		void setRight(IToken* token) { right = token; if (token) token->parent = this; }
 	};
 
 	class Sum : public IOperator
 	{
 	public:
 	   	double get() {
-				//if (left == nullptr && right) return right->get();
 				if (left == nullptr && right) return right->get();
 				if (left && right) return left->get() + right->get();
 
-				throw runtime_error("can't execute Sum operator");
+				throw runtime_error("can't execute Sum operator- missing value");
 			}
 		
 			OpPriority priority() { return PlusMinus; }
+			bool CanBeUnary() { return true; };
 	};
 
 	class Minus : public IOperator
@@ -116,10 +123,11 @@ namespace calcutron
 				if (left == nullptr && right) return -right->get();
 				if (right && left) return left->get() - right->get();
 
-				throw runtime_error("can't execute Minus operator");
+				throw runtime_error("can't execute Minus operator - missing value");
 			}
 
 			OpPriority priority() { return PlusMinus; }
+			bool CanBeUnary() { return true; };
 	};
 
 	class Mult : public IOperator
@@ -128,7 +136,7 @@ namespace calcutron
 	   	double get() {
 				if (left && right) return left->get() * right->get();
 
-				throw runtime_error("can't execute Mult operator");
+				throw runtime_error("can't execute Mult operator - missing value");
 			}
 
 			OpPriority priority() { return MulDiv; }
@@ -146,7 +154,7 @@ namespace calcutron
 						
 					return left->get() / right->get();
 				}
-				throw runtime_error("can't execute Div operator");
+				throw runtime_error("can't execute Div operator - missing value");
 			}
 
 			OpPriority priority() { return MulDiv; }
@@ -158,7 +166,7 @@ namespace calcutron
 		double get() {
 			if (left && right) return left->get() < right->get();
 
-			throw runtime_error("can't execute LT operator");
+			throw runtime_error("can't execute LT operator - missing value");
 		}
 
 		OpPriority priority() { return LessGreat; }
@@ -170,7 +178,7 @@ namespace calcutron
 		double get() {
 			if (left && right) return left->get() > right->get();
 
-			throw runtime_error("can't execute GT operator");
+			throw runtime_error("can't execute GT operator - missing value");
 		}
 
 		OpPriority priority() { return LessGreat; }
@@ -182,7 +190,7 @@ namespace calcutron
 		double get() {
 			if (left && right) return left->get() == right->get();
 
-			throw runtime_error("can't execute EQ operator");
+			throw runtime_error("can't execute EQ operator - missing value");
 		}
 
 		OpPriority priority() { return LessGreat; }
@@ -199,8 +207,7 @@ namespace calcutron
 	IToken* parse(istream* input, bool insideParentheses = false);		// парсим всю строку
 	IToken* readToken(istream* input);	// считывает отдельный токен
 	
-	int error(const string& msg);
-
+	int error(const string& msg);	
 }
 
 #endif

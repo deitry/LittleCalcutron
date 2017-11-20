@@ -37,19 +37,25 @@ int main(int argc, char** argv)
 		cout.fill(' ');
 		cout << ' ' << " = ";
 
-		auto tmp = istringstream(line.c_str());
-		
+		//auto tmp = istringstream(line.c_str());
+		auto tmp = new istringstream(line.c_str());
+
 		try
 		{
-			auto tree = calcutron::parse(&tmp);
-			result = tree->get();
-			cout << result << endl;
-			delete tree;
+			auto tree = calcutron::parse(tmp);
+			if (tree)
+			{
+				result = tree->get();
+				cout << result << endl;
+				delete tree;
+			}
 		}
 		catch (const runtime_error &e)
 		{
 			calcutron::error(e.what());
 		}
+
+		delete tmp;
 	}
 
 	if (input != &cin)

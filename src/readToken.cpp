@@ -20,7 +20,7 @@ namespace calcutron
 		char ch[2] = " "; // вообще мы будем считывать по одному символу, но используем c-строку, чтобы легко использовать regex_match
 
 		// прокручиваем пробелы - при инициализации символом указан пробел, так что мы сюда автоматически попадём
-		while (*input && (ch[0] == ' ' || ch[0] == '\t'))
+		while (*input && (regex_match(ch, tokenRegExMap[WS])))
 		{
 			ch[0] = input->get();
 		}
@@ -35,6 +35,9 @@ namespace calcutron
 			}
 		}
 
+		// если докрутили до конца строки, выходим
+		if (currentType == END) return nullptr;
+
 		// если мы не знаем, что это за символ, бросаем ошибку
 		if (currentType == NONE)
 		{
@@ -44,13 +47,15 @@ namespace calcutron
 		}
 			
 		// если перед нами выражение в скобках
-		if (currentType == PARENTHESES)
+		if (currentType == LP)
 		{
 			auto expr = new Expression(parse(input, true));
 			
 			//если нету закрывающей скобки - бросаем исключение
+			string par = ch;
 			ch[0] = input->get();
-			if (ch[0] != ')')
+			par += ch[0];
+			if (!regex_match(par, tokenRegExMap[PAR]))
 				throw runtime_error("expected ')");
 
 			return expr;
