@@ -1,7 +1,44 @@
-Sample project for training & testing purposes.
+Extendable calculator app. Parse input expression into binary tree.
 
-What things are used~tested:
+What things are used:
 - classes
 - Makefile
 - Boost unit testing
 - RegExes
+
+How to use:
+App is set up to be compiled and build by the means of gcc and make.
+There is regular - 'little' - and 'test' builds. 'RunTest.sh' builds both (via 'Rebuild.sh') 
+as Run/LittleCalcutron and Run/LittleCalcutronTest respectively and then runs tests.
+
+Main executable is Run/LittleCalcutron. It can be used in two ways:
+- input string may be transferred via parameters
+- or without any parameter it runs in interactive mode.
+
+Exit from interactive mode could be performed by entering 'q'
+
+Supported features:
+- not only basic operators: '+', '-', '*', '/', but also '>', '<', '=='
+- of course, expressions inside parentheses: "( ... )", "[ ... ]", "{ ... }"
+  you may choose any you like and put them inside any other as many times as you want. But don't mess up!
+- unary '+' and '-' calculation in expressions like:
+      "- - 1" = 1 (note that not "--1": "--" can be treated as separate operator, which is not supported at the moment)
+      "1* -1" = 1*(-1) = -1
+  unary '+' and '-' requires value tokens at the right of them, not left: "1-" - results in error
+- aliases for operators (only these - to show that feature is working):
+      "plus" stands for '+', "minus" - '-' and 'x' - '*'
+- exception handling. Errors are intercepted and error message is printed
+
+- - - - - - -
+
+Planned features:
+- more operators, including basic math functions like "sin", "abs" and so on
+- maybe config file to support custom aliases and other features that can be customized
+- named variables
+- more info when error occures - what caused error and where exactly. By now only type of error is printed out
+
+Something to think about:
+- functions/operators with more than two operands?
+- runtime-defined operators? Like "abs A / A" -> "sign"
+
+contact: dm.s.vornychev@gmail.com
