@@ -57,5 +57,5 @@ BOOST_AUTO_TEST_CASE(ReadOperatorTest)
 BOOST_AUTO_TEST_CASE(ReadExpressionTest)
 {
 	BOOST_CHECK(check_readToken<Expression>("(1+1)"));
-	check_exception_readToken<IOperator>("(1+1");
+	check_exception_readToken<Expression>("(1+1");
 }
